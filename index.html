@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <title>Free Fire Tournament Registration</title>
+  <style>
+    body { font-family: Arial; background: #111; color: #fff; text-align: center; padding: 20px;}
+    form { background: #222; padding: 20px; border-radius: 10px; display: inline-block; max-width: 400px; }
+    input, select { margin: 10px; padding: 8px; width: 90%; border-radius: 5px; border: none; }
+    button { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;}
+    button:hover { background: #218838; }
+    p { color: yellow; }
+    #whatsappJoin { background: #25D366; margin-top: 20px; }
+    #whatsappJoin:hover { background: #1ebe5d; }
+  </style>
+</head>
+<body>
+  <h1>🔥 Free Fire Tournament Registration 🔥</h1>
+
+  <div>
+    <p>Entry Fee: <span id="entryFeeText">Loading...</span></p>
+    <p>Prize Pool: <span id="prizePoolText">Loading...</span></p>
+    <p>Timing: <span id="timingText">Loading...</span></p>
+  </div>
+
+  <form id="regForm">
+    <input type="text" name="name" placeholder="Player Name" required><br>
+    <input type="email" name="email" placeholder="Email" required><br>
+    <input type="text" name="whatsapp" placeholder="WhatsApp Number" required><br>
+    <input type="text" name="gameid" placeholder="Game ID" required><br>
+    <select name="tournament" required>
+      <option value="">-- Select Tournament --</option>
+      <option value="Solo">Solo</option>
+      <option value="Duo">Duo</option>
+      <option value="Squad">Squad</option>
+    </select><br>
+    <button type="submit">Register Now</button>
+  </form>
+
+  <p id="msg"></p>
+
+  <!-- WhatsApp Join Button -->
+  <a href="https://chat.whatsapp.com/LH4TH7Y1gFJ4a5z70XXC6B?mode=ems_copy_c" target="_blank">
+    <button id="whatsappJoin">Join WhatsApp Group</button>
+  </a>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxHstodf6Ihyrhvf1bkIj_Do1YjjIEAqcn6o1xEUD6MxiGo0_GtJQ1YuwGBijsI0VnQfQ/exec";
+
+    let entryFee = 0;
+    let prizePool = 0;
+    let timing = "";
+
+    // Admin Sheet से values fetch करना
+    async function loadSettings() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      entryFee = data.entryFee;
+      prizePool = data.prizePool;
+      timing = data.timing;
+
+      document.getElementById("entryFeeText").innerText = entryFee;
+      document.getElementById("prizePoolText").innerText = prizePool;
+      document.getElementById("timingText").innerText = timing;
+    }
+
+    loadSettings();
+
+    // Form submit
+    document.getElementById("regForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+
+      let formData = {
+        name: this.name.value,
+        email: this.email.value,
+        whatsapp: this.whatsapp.value,
+        gameid: this.gameid.value,
+        tournament: this.tournament.value,
+        entryFee: entryFee,
+        prizePool: prizePool
+      };
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      document.getElementById("msg").innerText = data.message;
+      this.reset();
+    });
+  </script>
+</body>
+</html>
